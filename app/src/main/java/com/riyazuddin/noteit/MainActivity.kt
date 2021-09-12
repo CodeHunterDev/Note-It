@@ -8,14 +8,18 @@ import androidx.compose.material.Surface
 import com.riyazuddin.noteit.presentation.utill.Navigation
 import com.riyazuddin.noteit.presentation.ui.theme.NoteItTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var application: NoteItApplication
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NoteItTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     Navigation()
                 }

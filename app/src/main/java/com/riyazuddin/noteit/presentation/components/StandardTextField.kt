@@ -1,6 +1,7 @@
 package com.riyazuddin.noteit.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -19,17 +21,20 @@ fun StandardTextField(
     text: String,
     onValueChange: (String) -> Unit,
     hint: String,
-    keyboardType: KeyboardType,
     error: String = "",
-    passwordHidden: Boolean = true,
+    keyboardType: KeyboardType,
     passwordToggle: (Boolean) -> Unit = {},
-    hidePasswordToggleAction: Boolean = false
+    passwordHidden: Boolean = true,
+    hidePasswordToggleAction: Boolean = false,
+    imeAction: ImeAction,
+    onImeAction: () -> Unit
 ) {
 
     OutlinedTextField(
         value = text,
         onValueChange = onValueChange,
-        placeholder = {
+        modifier = Modifier.fillMaxWidth(),
+        label = {
             Text(text = hint)
         },
         singleLine = true,
@@ -37,7 +42,10 @@ fun StandardTextField(
         visualTransformation = if (passwordHidden && keyboardType == KeyboardType.Password)
             PasswordVisualTransformation()
         else VisualTransformation.None,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = imeAction
+        ),
         trailingIcon = {
             if (keyboardType == KeyboardType.Password && !hidePasswordToggleAction) {
                 IconButton(onClick = {
@@ -59,6 +67,8 @@ fun StandardTextField(
                 }
             }
         },
-        modifier = Modifier.fillMaxWidth()
+        keyboardActions = KeyboardActions{
+            onImeAction()
+        }
     )
 }
