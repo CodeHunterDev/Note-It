@@ -1,4 +1,4 @@
-package com.riyazuddin.noteit.presentation.utill
+package com.riyazuddin.noteit.common
 
 sealed class Screen (val route: String){
     object LoginScreen: Screen("login_screen")

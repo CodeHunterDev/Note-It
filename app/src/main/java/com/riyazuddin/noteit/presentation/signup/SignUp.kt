@@ -1,4 +1,4 @@
-package com.riyazuddin.noteit.presentation.login
+package com.riyazuddin.noteit.presentation.signup
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -28,31 +28,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import com.riyazuddin.noteit.R
 import com.riyazuddin.noteit.common.Screen
 import com.riyazuddin.noteit.presentation.components.StandardTextField
-import timber.log.Timber
 
 @Composable
-fun LoginScreen(
+fun SignUpScreen(
     navController: NavController,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
-            .verticalScroll(state = scrollState, enabled = true),
+            .verticalScroll(scrollState, true),
         contentAlignment = Alignment.Center
     ) {
-        val loginState = viewModel.loginState.value
+        val signUpState = viewModel.authState.value
+
         Column(
             modifier = Modifier
                 .matchParentSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
+
             Text(
                 text = stringResource(R.string.app_name),
                 color = MaterialTheme.colors.primary,
@@ -65,20 +67,21 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
             ) {
+                val localFocusManager = LocalFocusManager.current
+
                 Text(
-                    text = stringResource(R.string.login),
+                    text = stringResource(R.string.sign_up),
                     color = MaterialTheme.colors.onBackground,
                     fontWeight = FontWeight.Bold,
                     fontSize = 40.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                val localFocusManager = LocalFocusManager.current
                 StandardTextField(
                     text = viewModel.email.value,
                     onValueChange = {
                         viewModel.setEmail(it)
                     },
-                    hint = stringResource(id = R.string.email),
+                    hint = stringResource(R.string.email),
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next,
                     onImeAction = {
@@ -91,13 +94,23 @@ fun LoginScreen(
                     onValueChange = {
                         viewModel.setPassword(it)
                     },
-                    hint = stringResource(id = R.string.password),
+                    hint = stringResource(R.string.password),
                     keyboardType = KeyboardType.Password,
-//                error = viewModel.passwordError.value,
-                    passwordHidden = viewModel.passwordToggleState.value,
-                    passwordToggle = {
-                        viewModel.setPasswordToggleState(it)
+                    hidePasswordToggleAction = true,
+                    imeAction = ImeAction.Next,
+                    onImeAction = {
+                        localFocusManager.moveFocus(FocusDirection.Down)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                StandardTextField(
+                    text = viewModel.repeatPassword.value,
+                    onValueChange = {
+                        viewModel.setRepeatPassword(it)
                     },
+                    hint = stringResource(R.string.repeat_password),
+                    keyboardType = KeyboardType.Password,
+                    hidePasswordToggleAction = true,
                     imeAction = ImeAction.Done,
                     onImeAction = {
                         localFocusManager.clearFocus(true)
@@ -106,24 +119,23 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(18.dp))
                 Button(
                     onClick = {
-                        Timber.i("Clicked")
-                        viewModel.login()
+                        viewModel.signUp()
                     },
-                    enabled = !loginState.isLoading,
+                    enabled = !(signUpState.isLoading),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.login),
+                        text = stringResource(id = R.string.sign_up),
                         fontSize = 20.sp
                     )
                 }
             }
             Text(
                 text = buildAnnotatedString {
-                    append(stringResource(R.string.dont_have_an_account))
+                    append(stringResource(R.string.already_have_an_account))
                     append(" ")
                     withStyle(
                         style = SpanStyle(
@@ -132,26 +144,37 @@ fun LoginScreen(
                             fontStyle = FontStyle.Italic
                         )
                     ) {
-                        append(stringResource(R.string.sign_up))
+                        append(stringResource(R.string.login))
                     }
                 },
                 color = MaterialTheme.colors.onBackground,
                 modifier = Modifier
                     .clickable {
-                        navController.navigate(Screen.SignUpScreen.route)
+                        navController.popBackStack()
                     }
             )
         }
 
-        if (loginState.isLoading)
+        if (signUpState.isLoading) {
             CircularProgressIndicator()
+        }
+        if (signUpState.authSuccess) {
+            if (signUpState.authSuccessMessage.isNotEmpty())
+                Toast.makeText(
+                    LocalContext.current,
+                    signUpState.authSuccessMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
 
-        if (loginState.authSuccess)
-//            navController.navigate(Screen.NotesScreen.route)
+            // At the top level of your kotlin file:
 
-        if (loginState.error.isNotEmpty()){
-            Toast.makeText(LocalContext.current, loginState.error, Toast.LENGTH_SHORT).show()
-            viewModel.reAssignLoginState()
+            val options = NavOptions.Builder()
+                .setPopUpTo(Screen.LoginScreen.route, true).build()
+            navController.navigate(Screen.NotesScreen.route, options)
+        }
+        if (signUpState.error.isNotEmpty()) {
+            Toast.makeText(LocalContext.current, signUpState.error, Toast.LENGTH_SHORT).show()
+            viewModel.reAssignSignUpState()
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.riyazuddin.noteit.presentation.notes
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,20 +12,33 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.gson.Gson
+import com.riyazuddin.noteit.R
+import com.riyazuddin.noteit.common.Screen
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.presentation.components.NoteCard
-import com.riyazuddin.noteit.presentation.utill.Screen
 
 
 @Composable
 fun NotesScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: GetNotesViewModel = hiltViewModel()
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column {
+
+    fun navigationToNote(note: Note) {
+        val user = Gson().toJson(note)
+        navController.navigate("${Screen.CreateNoteScreen.route}/$user")
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(modifier = Modifier.matchParentSize()) {
             TopAppBar(
                 title = { Text("Notes") },
                 actions = {
@@ -41,27 +53,12 @@ fun NotesScreen(
                     }
                 }
             )
-
-            val context = LocalContext.current
             LazyColumn {
-                for (i in 1..10) {
-                    item {
-                        NoteCard(
-                            Note(
-                                "1",
-                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                                123L,
-                                "",
-                                ""
-                            )
-                        ) {
-                            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-
+//                items(emptyList<Note>()) { note ->
+//                    NoteCard(note) {
+//                        navigationToNote(note)
+//                    }
+//                }
             }
         }
         FloatingActionButton(
@@ -71,13 +68,14 @@ fun NotesScreen(
             backgroundColor = MaterialTheme.colors.primary,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(horizontal = 16.dp, vertical = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp),
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "Create new Note",
+                contentDescription = stringResource(R.string.create_new_note),
                 tint = MaterialTheme.colors.onPrimary
             )
         }
+
     }
 }
