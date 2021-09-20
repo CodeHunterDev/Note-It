@@ -1,8 +1,12 @@
 package com.riyazuddin.noteit.di
 
 import android.content.Context
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.riyazuddin.noteit.NoteItApplication
 import com.riyazuddin.noteit.common.Constants.BASE_URL
+import com.riyazuddin.noteit.common.Constants.NOTES_DB_NAME
+import com.riyazuddin.noteit.data.local.NotesDB
 import com.riyazuddin.noteit.data.remote.NoteItApi
 import com.riyazuddin.noteit.data.repository.AuthRepositoryImp
 import com.riyazuddin.noteit.domain.repository.IAuthRepository
@@ -40,4 +44,16 @@ object AppModule {
     fun provideAuthRepository(noteItApi: NoteItApi): IAuthRepository {
         return AuthRepositoryImp(noteItApi)
     }
+
+    @Provides
+    @Singleton
+    fun provideNoteDB(
+        @ApplicationContext context: Context
+    ) = Room.databaseBuilder(context, NotesDB::class.java, NOTES_DB_NAME).build()
+
+    @Provides
+    @Singleton
+    fun provideNoteDao(
+        notesDB: NotesDB
+    ) = notesDB.notedDao()
 }
