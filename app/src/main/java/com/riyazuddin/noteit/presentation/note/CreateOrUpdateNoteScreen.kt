@@ -33,6 +33,8 @@ fun CreateNoteScreen(
     viewModel: CreateOrUpdateNoteViewModel = hiltViewModel()
 ) {
 
+    val noteState = viewModel.noteState.value
+
     val isFirstTime = remember {
         mutableStateOf(true)
     }
@@ -44,8 +46,7 @@ fun CreateNoteScreen(
 
     val localFocusManager = LocalFocusManager.current
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier.matchParentSize()
@@ -63,7 +64,7 @@ fun CreateNoteScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        TODO()
+                        viewModel.saveNote()
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
@@ -165,6 +166,18 @@ fun CreateNoteScreen(
                 )
             }
         }
+
+        if (noteState.isLoading)
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        if (noteState.success)
+            Text(
+                text = "Saved",
+                modifier = Modifier
+                    .padding(bottom = 32.dp)
+                    .align(Alignment.BottomCenter)
+            )
+        if (noteState.error.isNotEmpty())
+            Text(text = noteState.error)
     }
 
 }

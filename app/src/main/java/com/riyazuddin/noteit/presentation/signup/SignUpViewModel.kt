@@ -40,7 +40,7 @@ class SignUpViewModel @Inject constructor(
     private val _signUpState = mutableStateOf(AuthState())
     val authState: State<AuthState> = _signUpState
     fun signUp() {
-        signUpUseCase(email.value, password.value).onEach {
+        signUpUseCase(email.value, password.value, repeatPassword.value).onEach {
             when (it) {
                 is Resource.Loading -> {
                     _signUpState.value = AuthState(true)

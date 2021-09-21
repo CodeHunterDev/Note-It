@@ -3,7 +3,6 @@ package com.riyazuddin.noteit.data.repository
 import com.riyazuddin.noteit.common.Constants.AN_UNKNOWN_ERROR_OCCURRED
 import com.riyazuddin.noteit.common.Resource
 import com.riyazuddin.noteit.common.safeCall
-import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.data.remote.NoteItApi
 import com.riyazuddin.noteit.data.remote.request.AccountRequest
 import com.riyazuddin.noteit.data.remote.response.AuthResponse
@@ -16,10 +15,10 @@ class AuthRepositoryImp @Inject constructor(
     private val noteItApi: NoteItApi
 ) : IAuthRepository {
 
-    override suspend fun signUp(accountRequest: AccountRequest): Resource<AuthResponse> =
+    override suspend fun signUp(email: String, password: String): Resource<AuthResponse> =
         withContext(Dispatchers.IO) {
             safeCall {
-                val response = noteItApi.signUp(accountRequest)
+                val response = noteItApi.signUp(AccountRequest(email, password))
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.successful)
@@ -33,10 +32,10 @@ class AuthRepositoryImp @Inject constructor(
             }
         }
 
-    override suspend fun login(accountRequest: AccountRequest): Resource<AuthResponse> =
+    override suspend fun login(email: String, password: String): Resource<AuthResponse> =
         withContext(Dispatchers.IO) {
             safeCall {
-                val response = noteItApi.login(accountRequest)
+                val response = noteItApi.login(AccountRequest(email, password))
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.successful)

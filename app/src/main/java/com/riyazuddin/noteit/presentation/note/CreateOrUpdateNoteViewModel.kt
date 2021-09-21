@@ -3,13 +3,19 @@ package com.riyazuddin.noteit.presentation.note
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.riyazuddin.noteit.common.Resource
 import com.riyazuddin.noteit.data.model.Note
+import com.riyazuddin.noteit.domain.use_cases.create_or_update_note.CreateOrUpdateNoteUseCase
+import com.riyazuddin.noteit.presentation.states.NoteState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateOrUpdateNoteViewModel @Inject constructor(
-
+    private val createOrUpdateNote: CreateOrUpdateNoteUseCase
 ) : ViewModel() {
 
     fun setNote(note: Note) {
@@ -56,5 +62,23 @@ class CreateOrUpdateNoteViewModel @Inject constructor(
     fun setColor(color: String) {
         _color.value = color
     }
-    
+
+    private val _noteState = mutableStateOf(NoteState())
+    val noteState: State<NoteState> = _noteState
+    fun saveNote() {
+        createOrUpdateNote(
+            id.value,
+            title.value,
+            content.value,
+            date.value,
+            owner.value,
+            color.value
+        ).onEach { resource ->
+            when (resource) {
+                is Resource.Loading -> _noteState.value = NoteState(true)
+                is Resource.Success -> _noteState.value = NoteState(success = true)
+                is Resource.Error -> _noteState.value = NoteState(error = "Error")
+            }
+        }.launchIn(viewModelScope)
+    }
 }

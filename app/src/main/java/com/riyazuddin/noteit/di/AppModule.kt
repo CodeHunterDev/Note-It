@@ -6,10 +6,13 @@ import androidx.room.RoomDatabase
 import com.riyazuddin.noteit.NoteItApplication
 import com.riyazuddin.noteit.common.Constants.BASE_URL
 import com.riyazuddin.noteit.common.Constants.NOTES_DB_NAME
+import com.riyazuddin.noteit.data.local.NoteDao
 import com.riyazuddin.noteit.data.local.NotesDB
 import com.riyazuddin.noteit.data.remote.NoteItApi
 import com.riyazuddin.noteit.data.repository.AuthRepositoryImp
+import com.riyazuddin.noteit.data.repository.NotesRepositoryImp
 import com.riyazuddin.noteit.domain.repository.IAuthRepository
+import com.riyazuddin.noteit.domain.repository.INoteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,4 +59,12 @@ object AppModule {
     fun provideNoteDao(
         notesDB: NotesDB
     ) = notesDB.notedDao()
+
+    @Provides
+    @Singleton
+    fun provideNoteRepository(
+        noteDao: NoteDao,
+        noteItApi: NoteItApi,
+        @ApplicationContext context: Context
+    ): INoteRepository = NotesRepositoryImp(noteDao, noteItApi, context)
 }

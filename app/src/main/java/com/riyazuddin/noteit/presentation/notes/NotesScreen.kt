@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -28,6 +29,8 @@ fun NotesScreen(
     navController: NavController,
     viewModel: GetNotesViewModel = hiltViewModel()
 ) {
+
+    val getNotesState = viewModel.getNoteState.value
 
     fun navigationToNote(note: Note) {
         val user = Gson().toJson(note)
@@ -54,16 +57,23 @@ fun NotesScreen(
                 }
             )
             LazyColumn {
-//                items(emptyList<Note>()) { note ->
-//                    NoteCard(note) {
-//                        navigationToNote(note)
-//                    }
-//                }
+                items(getNotesState.notes) { note ->
+                    NoteCard(note) {
+                        navigationToNote(note)
+                    }
+                }
             }
         }
         FloatingActionButton(
             onClick = {
-                navController.navigate(Screen.CreateNoteScreen.route)
+                navigationToNote(
+                    Note(
+                        title = "",
+                        content = "",
+                        date = System.currentTimeMillis(),
+                        color = "FF0036"
+                    )
+                )
             },
             backgroundColor = MaterialTheme.colors.primary,
             modifier = Modifier
@@ -77,5 +87,16 @@ fun NotesScreen(
             )
         }
 
+        if (getNotesState.isLoading)
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        if (getNotesState.success)
+            Text(
+                text = "Got",
+                modifier = Modifier
+                    .padding(bottom = 32.dp)
+                    .align(Alignment.BottomCenter)
+            )
+        if (getNotesState.error.isNotEmpty())
+            Text(text = getNotesState.error)
     }
 }

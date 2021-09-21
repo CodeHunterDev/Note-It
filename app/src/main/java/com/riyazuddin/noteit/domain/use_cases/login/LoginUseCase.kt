@@ -14,6 +14,6 @@ class LoginUseCase @Inject constructor(
 ) {
     operator fun invoke(email: String, password: String): Flow<Resource<AuthResponse>> = flow {
         emit(Resource.Loading())
-        emit(authRepository.login(AccountRequest(email, password)))
+        emit(authRepository.login(email, password))
     }
 }

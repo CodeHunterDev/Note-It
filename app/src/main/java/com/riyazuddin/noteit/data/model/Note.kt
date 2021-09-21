@@ -12,8 +12,8 @@ data class Note(
     val title: String,
     val content: String,
     val date: Long,
-    val owner: String,
+    val owner: String = "613b7045df47b27efb18626d",
     val color: String,
     @Expose(deserialize = false, serialize = false)
-    val isSynced: Boolean
+    var isSynced: Boolean = false
 )
