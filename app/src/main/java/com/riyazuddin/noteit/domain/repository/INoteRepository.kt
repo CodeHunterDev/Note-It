@@ -11,4 +11,6 @@ interface INoteRepository {
     suspend fun insertNotes(notes: List<Note>)
 
     fun getAllNotes(): Flow<Resource<List<Note>>>
+
+    suspend fun syncNotes()
 }

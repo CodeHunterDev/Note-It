@@ -17,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.gson.Gson
 import com.riyazuddin.noteit.R
 import com.riyazuddin.noteit.common.Screen
@@ -41,7 +43,7 @@ fun NotesScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(modifier = Modifier.matchParentSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
                 title = { Text("Notes") },
                 actions = {
@@ -56,10 +58,17 @@ fun NotesScreen(
                     }
                 }
             )
-            LazyColumn {
-                items(getNotesState.notes) { note ->
-                    NoteCard(note) {
-                        navigationToNote(note)
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing.value),
+                onRefresh = {
+                    viewModel.setRefreshing(true)
+                }
+            ) {
+                LazyColumn(Modifier.fillMaxSize()) {
+                    items(getNotesState.notes) { note ->
+                        NoteCard(note) {
+                            navigationToNote(note)
+                        }
                     }
                 }
             }
@@ -89,13 +98,10 @@ fun NotesScreen(
 
         if (getNotesState.isLoading)
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        if (getNotesState.success)
-            Text(
-                text = "Got",
-                modifier = Modifier
-                    .padding(bottom = 32.dp)
-                    .align(Alignment.BottomCenter)
-            )
+        if (getNotesState.success) {
+            viewModel.setRefreshing(false)
+        }
+
         if (getNotesState.error.isNotEmpty())
             Text(text = getNotesState.error)
     }

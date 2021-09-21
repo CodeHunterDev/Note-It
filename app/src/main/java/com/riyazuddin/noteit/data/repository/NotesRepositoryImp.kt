@@ -9,6 +9,7 @@ import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.data.remote.NoteItApi
 import com.riyazuddin.noteit.domain.repository.INoteRepository
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
 import javax.inject.Inject
 
 class NotesRepositoryImp @Inject constructor(
@@ -23,15 +24,32 @@ class NotesRepositoryImp @Inject constructor(
         } catch (e: Exception) {
             null
         }
-        if (response != null && response.isSuccessful){
+        if (response != null && response.isSuccessful) {
             noteDao.insert(note.apply { isSynced = true })
-        }
-        else
+        } else
             noteDao.insert(note)
     }
 
     override suspend fun insertNotes(notes: List<Note>) {
         notes.forEach { insertNote(it) }
+    }
+
+    private var curNotesResponse: Response<List<Note>>? = null
+
+    override suspend fun syncNotes() {
+        val unSyncedNotes = noteDao.getAllUnSyncedNotes()
+        unSyncedNotes.forEach {
+            insertNote(it)
+        }
+
+        curNotesResponse = noteItApi.getNotes()
+//        curNotesResponse?.body()?.let { notes ->
+//            noteDao.deleteAllNotes()
+//            notes.onEach {
+//                it.isSynced = true
+//                noteDao.insert(it)
+//            }
+//        }
     }
 
     override fun getAllNotes(): Flow<Resource<List<Note>>> {
@@ -40,11 +58,15 @@ class NotesRepositoryImp @Inject constructor(
                 noteDao.getAllNotes()
             },
             fetch = {
-                noteItApi.getNotes()
+                syncNotes()
+                curNotesResponse
             },
             saveFetchResult = { response ->
-                response.body()?.let {
-                    insertNotes(it)
+                response?.body()?.let { notes ->
+                    notes.onEach { note ->
+                        note.isSynced = true
+                        noteDao.insert(note)
+                    }
                 }
             },
             shouldFetch = {

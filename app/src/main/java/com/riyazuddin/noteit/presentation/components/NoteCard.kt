@@ -5,19 +5,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.riyazuddin.noteit.common.HexToJetpackColor.getColor
 import com.riyazuddin.noteit.data.model.Note
-import com.riyazuddin.noteit.presentation.ui.theme.Shapes
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun NoteCard(
@@ -31,7 +37,7 @@ fun NoteCard(
             .clickable {
                 onClick()
             },
-        elevation = 8.dp,
+        elevation = 5.dp,
     ) {
 
         Row(
@@ -52,7 +58,9 @@ fun NoteCard(
             )
 
             Column(
-                modifier = Modifier.padding(start = 3.dp)
+                modifier = Modifier
+                    .padding(5.dp)
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = note.title,
@@ -75,6 +83,39 @@ fun NoteCard(
                     maxLines = 2,
                     modifier = Modifier.padding(bottom = 5.dp)
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    val sdf = SimpleDateFormat("dd-mm-yy hh:mm", Locale.US)
+                    val date = "Date: ${sdf.format(note.date)}"
+                    Text(
+                        text = date,
+                        modifier = Modifier.padding(end = 0.dp),
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Light,
+                        )
+                    )
+
+                    Row {
+                        val dis = if (note.isSynced) "Synced" else "Not Synced"
+                        Icon(
+                            imageVector = if (note.isSynced) Icons.Default.Check else Icons.Default.Close,
+                            contentDescription = dis,
+                            tint = if (note.isSynced) Color.Green else Color.Red
+                        )
+                        Text(
+                            text = dis,
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Light,
+                            )
+                        )
+                    }
+
+                }
             }
         }
     }

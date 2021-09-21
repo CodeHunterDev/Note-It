@@ -17,6 +17,14 @@ class GetNotesViewModel @Inject constructor(
     private val getNotesUseCase: GetNotesUseCase
 ) : ViewModel() {
 
+    private val _isRefreshing = mutableStateOf(false)
+    val isRefreshing: State<Boolean> = _isRefreshing
+    fun setRefreshing(isRefreshing: Boolean){
+        _isRefreshing.value = isRefreshing
+        if (isRefreshing)
+            getAllNotes()
+    }
+
     private val _getNoteState = mutableStateOf(GetNotesState())
     val getNoteState: State<GetNotesState> = _getNoteState
 
