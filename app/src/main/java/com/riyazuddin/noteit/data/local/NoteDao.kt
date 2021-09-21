@@ -17,9 +17,6 @@ interface NoteDao {
     @Query("DELETE FROM notes WHERE id = :noteId")
     suspend fun deleteNoteByID(noteId: String)
 
-    @Query("SELECT * FROM notes WHERE isSynced = 1")
-    suspend fun getAllSyncedNotes(): List<Note>
-
     @Query("SELECT * FROM notes WHERE isSynced = 0")
     suspend fun getAllUnSyncedNotes(): List<Note>
 

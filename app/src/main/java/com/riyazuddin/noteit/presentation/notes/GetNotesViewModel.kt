@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.riyazuddin.noteit.common.Constants.AN_UNKNOWN_ERROR_OCCURRED
 import com.riyazuddin.noteit.common.Resource
 import com.riyazuddin.noteit.domain.use_cases.get_notes.GetNotesUseCase
 import com.riyazuddin.noteit.presentation.states.GetNotesState
@@ -19,7 +20,7 @@ class GetNotesViewModel @Inject constructor(
 
     private val _isRefreshing = mutableStateOf(false)
     val isRefreshing: State<Boolean> = _isRefreshing
-    fun setRefreshing(isRefreshing: Boolean){
+    fun setRefreshing(isRefreshing: Boolean) {
         _isRefreshing.value = isRefreshing
         if (isRefreshing)
             getAllNotes()
@@ -38,7 +39,11 @@ class GetNotesViewModel @Inject constructor(
                 is Resource.Loading -> _getNoteState.value = GetNotesState(true)
                 is Resource.Success -> _getNoteState.value =
                     GetNotesState(success = true, notes = resource.data ?: emptyList())
-                is Resource.Error -> _getNoteState.value = GetNotesState(error = "error")
+                is Resource.Error -> _getNoteState.value =
+                    GetNotesState(
+                        notes = resource.data ?: emptyList(),
+                        error = resource.message ?: AN_UNKNOWN_ERROR_OCCURRED
+                    )
             }
         }.launchIn(viewModelScope)
     }

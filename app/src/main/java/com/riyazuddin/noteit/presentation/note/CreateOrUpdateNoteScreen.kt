@@ -1,5 +1,6 @@
 package com.riyazuddin.noteit.presentation.note
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -24,8 +26,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.riyazuddin.noteit.R
+import com.riyazuddin.noteit.common.getDate
 import com.riyazuddin.noteit.data.model.Note
+import kotlinx.coroutines.DelicateCoroutinesApi
 
+@DelicateCoroutinesApi
 @Composable
 fun CreateNoteScreen(
     navController: NavController,
@@ -54,7 +59,10 @@ fun CreateNoteScreen(
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = { TODO() }) {
+                    IconButton(onClick = {
+                        viewModel.saveNote()
+                        navController.navigateUp()
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBackIos,
                             contentDescription = stringResource(R.string.back),
@@ -121,7 +129,12 @@ fun CreateNoteScreen(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "Date", modifier = Modifier
+                    text = getDate(note.date),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal
+                    ),
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp)
                 )
@@ -170,14 +183,7 @@ fun CreateNoteScreen(
         if (noteState.isLoading)
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         if (noteState.success)
-            Text(
-                text = "Saved",
-                modifier = Modifier
-                    .padding(bottom = 32.dp)
-                    .align(Alignment.BottomCenter)
-            )
-        if (noteState.error.isNotEmpty())
-            Text(text = noteState.error)
+            Toast.makeText(LocalContext.current, "Saved", Toast.LENGTH_SHORT).show()
     }
 
 }

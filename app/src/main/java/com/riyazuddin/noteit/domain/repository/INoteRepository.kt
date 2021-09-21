@@ -3,6 +3,7 @@ package com.riyazuddin.noteit.domain.repository
 import com.riyazuddin.noteit.common.Resource
 import com.riyazuddin.noteit.data.model.Note
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
 
 interface INoteRepository {
 
@@ -12,5 +13,5 @@ interface INoteRepository {
 
     fun getAllNotes(): Flow<Resource<List<Note>>>
 
-    suspend fun syncNotes()
+    suspend fun syncNotes(): Response<List<Note>>
 }

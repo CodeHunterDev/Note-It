@@ -34,22 +34,12 @@ class NotesRepositoryImp @Inject constructor(
         notes.forEach { insertNote(it) }
     }
 
-    private var curNotesResponse: Response<List<Note>>? = null
-
-    override suspend fun syncNotes() {
+    override suspend fun syncNotes(): Response<List<Note>> {
         val unSyncedNotes = noteDao.getAllUnSyncedNotes()
         unSyncedNotes.forEach {
             insertNote(it)
         }
-
-        curNotesResponse = noteItApi.getNotes()
-//        curNotesResponse?.body()?.let { notes ->
-//            noteDao.deleteAllNotes()
-//            notes.onEach {
-//                it.isSynced = true
-//                noteDao.insert(it)
-//            }
-//        }
+        return noteItApi.getNotes()
     }
 
     override fun getAllNotes(): Flow<Resource<List<Note>>> {
@@ -59,10 +49,9 @@ class NotesRepositoryImp @Inject constructor(
             },
             fetch = {
                 syncNotes()
-                curNotesResponse
             },
             saveFetchResult = { response ->
-                response?.body()?.let { notes ->
+                response.body()?.let { notes ->
                     notes.onEach { note ->
                         note.isSynced = true
                         noteDao.insert(note)

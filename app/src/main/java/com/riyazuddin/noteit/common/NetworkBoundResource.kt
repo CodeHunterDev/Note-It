@@ -1,6 +1,7 @@
 package com.riyazuddin.noteit.common
 
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
 /**
  * ResultType -> Note from database
@@ -24,8 +25,9 @@ inline fun <ResultType, RequestType> networkBoundResource(
             query().map {
                 Resource.Success(it)
             }
-        } catch (t: Throwable) {
-            onFetchFailed(t)
+        }catch (e: Exception){
+            Timber.e(e)
+            onFetchFailed(e)
             query().map {
                 Resource.Error("Couldn't reach server. Try later.", it)
             }

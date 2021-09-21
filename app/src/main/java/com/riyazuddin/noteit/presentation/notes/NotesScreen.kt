@@ -98,11 +98,8 @@ fun NotesScreen(
 
         if (getNotesState.isLoading)
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        if (getNotesState.success) {
+        if (getNotesState.success || getNotesState.error.isNotEmpty()) {
             viewModel.setRefreshing(false)
         }
-
-        if (getNotesState.error.isNotEmpty())
-            Text(text = getNotesState.error)
     }
 }

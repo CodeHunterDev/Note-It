@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.riyazuddin.noteit.common.HexToJetpackColor.getColor
+import com.riyazuddin.noteit.common.getDate
 import com.riyazuddin.noteit.data.model.Note
 import java.text.SimpleDateFormat
 import java.util.*
@@ -88,10 +89,9 @@ fun NoteCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
-                    val sdf = SimpleDateFormat("dd-mm-yy hh:mm", Locale.US)
-                    val date = "Date: ${sdf.format(note.date)}"
+
                     Text(
-                        text = date,
+                        text = getDate(note.date),
                         modifier = Modifier.padding(end = 0.dp),
                         style = TextStyle(
                             fontSize = 12.sp,
