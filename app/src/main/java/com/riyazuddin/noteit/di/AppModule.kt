@@ -2,7 +2,6 @@ package com.riyazuddin.noteit.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.riyazuddin.noteit.NoteItApplication
 import com.riyazuddin.noteit.common.Constants.BASE_URL
 import com.riyazuddin.noteit.common.Constants.NOTES_DB_NAME
@@ -10,9 +9,13 @@ import com.riyazuddin.noteit.data.local.NoteDao
 import com.riyazuddin.noteit.data.local.NotesDB
 import com.riyazuddin.noteit.data.remote.NoteItApi
 import com.riyazuddin.noteit.data.repository.AuthRepositoryImp
-import com.riyazuddin.noteit.data.repository.NotesRepositoryImp
+import com.riyazuddin.noteit.data.repository.NoteRepositoryImp
 import com.riyazuddin.noteit.domain.repository.IAuthRepository
 import com.riyazuddin.noteit.domain.repository.INoteRepository
+import com.riyazuddin.noteit.domain.use_cases.notes.DeleteNoteUseCase
+import com.riyazuddin.noteit.domain.use_cases.notes.GetNotesUseCase
+import com.riyazuddin.noteit.domain.use_cases.notes.InsertNoteUseCase
+import com.riyazuddin.noteit.domain.use_cases.notes.NotesUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -66,5 +69,15 @@ object AppModule {
         noteDao: NoteDao,
         noteItApi: NoteItApi,
         @ApplicationContext context: Context
-    ): INoteRepository = NotesRepositoryImp(noteDao, noteItApi, context)
+    ): INoteRepository = NoteRepositoryImp(noteDao, noteItApi, context)
+
+    @Provides
+    @Singleton
+    fun provideNotesUseCases(notesRepository: INoteRepository) = kotlin.run {
+        NotesUseCases(
+            getNotes = GetNotesUseCase(notesRepository),
+            deleteNoteUseCase = DeleteNoteUseCase(notesRepository),
+            insertNoteUseCase = InsertNoteUseCase(notesRepository)
+        )
+    }
 }

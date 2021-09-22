@@ -11,16 +11,14 @@ class CreateOrUpdateNoteUseCase @Inject constructor(
     private val noteRepository: INoteRepository
 ) {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         id: String,
         title: String,
         content: String,
         date: Long,
         owner: String,
-        color: String
-    ): Flow<Resource<Unit>> = flow {
-        emit(Resource.Loading())
-        val a = noteRepository.insertNote(Note(id, title, content, date, owner, color))
-        emit(Resource.Success(Unit))
+        color: Int
+    ) {
+        noteRepository.insertNote(Note(id, title, content, date, owner, color))
     }
 }

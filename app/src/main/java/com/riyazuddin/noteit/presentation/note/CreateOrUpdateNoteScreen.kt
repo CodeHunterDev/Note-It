@@ -129,7 +129,7 @@ fun CreateNoteScreen(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = getDate(note.date),
+                    text = getDate(note.timestamp),
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal

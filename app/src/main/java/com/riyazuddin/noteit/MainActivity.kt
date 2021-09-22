@@ -3,6 +3,7 @@ package com.riyazuddin.noteit
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import com.riyazuddin.noteit.common.Navigation
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var application: NoteItApplication
 
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

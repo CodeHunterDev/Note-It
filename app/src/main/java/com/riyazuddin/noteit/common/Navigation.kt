@@ -1,5 +1,6 @@
 package com.riyazuddin.noteit.common
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,6 +15,7 @@ import com.riyazuddin.noteit.presentation.notes.NotesScreen
 import com.riyazuddin.noteit.presentation.settings.SettingsScreen
 import com.riyazuddin.noteit.presentation.signup.SignUpScreen
 
+@ExperimentalAnimationApi
 @Composable
 fun Navigation() {
     val navController = rememberNavController()

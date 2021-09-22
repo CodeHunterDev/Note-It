@@ -10,9 +10,10 @@ import com.riyazuddin.noteit.data.remote.NoteItApi
 import com.riyazuddin.noteit.domain.repository.INoteRepository
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
-class NotesRepositoryImp @Inject constructor(
+class NoteRepositoryImp @Inject constructor(
     private val noteDao: NoteDao,
     private val noteItApi: NoteItApi,
     private val context: Context
@@ -34,15 +35,20 @@ class NotesRepositoryImp @Inject constructor(
         notes.forEach { insertNote(it) }
     }
 
+    override suspend fun deleteNote(note: Note) {
+        noteDao.deleteNoteByID(note.id)
+    }
+
     override suspend fun syncNotes(): Response<List<Note>> {
         val unSyncedNotes = noteDao.getAllUnSyncedNotes()
         unSyncedNotes.forEach {
             insertNote(it)
         }
+        //TODO("Sync deleted notes")
         return noteItApi.getNotes()
     }
 
-    override fun getAllNotes(): Flow<Resource<List<Note>>> {
+    override fun getAllNotes(): Flow<List<Note>> {
         return networkBoundResource(
             query = {
                 noteDao.getAllNotes()
@@ -52,6 +58,7 @@ class NotesRepositoryImp @Inject constructor(
             },
             saveFetchResult = { response ->
                 response.body()?.let { notes ->
+                    Timber.i(notes.toString())
                     notes.onEach { note ->
                         note.isSynced = true
                         noteDao.insert(note)

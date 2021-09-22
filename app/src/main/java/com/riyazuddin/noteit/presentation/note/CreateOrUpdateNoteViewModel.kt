@@ -10,9 +10,7 @@ import com.riyazuddin.noteit.presentation.states.NoteState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +22,7 @@ class CreateOrUpdateNoteViewModel @Inject constructor(
         setId(note.id)
         setTitle(note.title)
         setContent(note.content)
-        setDate(note.date)
+        setDate(note.timestamp)
         setOwner(note.owner)
         setColor(note.color)
     }
@@ -59,9 +57,9 @@ class CreateOrUpdateNoteViewModel @Inject constructor(
         _owner.value = owner
     }
 
-    private val _color = mutableStateOf("")
-    val color: State<String> = _color
-    fun setColor(color: String) {
+    private val _color = mutableStateOf(0)
+    val color: State<Int> = _color
+    fun setColor(color: Int) {
         _color.value = color
     }
 
@@ -69,19 +67,19 @@ class CreateOrUpdateNoteViewModel @Inject constructor(
     val noteState: State<NoteState> = _noteState
     @DelicateCoroutinesApi
     fun saveNote() {
-        createOrUpdateNote(
-            id.value,
-            title.value,
-            content.value,
-            date.value,
-            owner.value,
-            color.value
-        ).onEach { resource ->
-            when (resource) {
-                is Resource.Loading -> _noteState.value = NoteState(true)
-                is Resource.Success -> _noteState.value = NoteState(success = true)
-                is Resource.Error -> _noteState.value = NoteState(error = "Error")
-            }
-        }.launchIn(GlobalScope)
+//        createOrUpdateNote(
+//            id.value,
+//            title.value,
+//            content.value,
+//            date.value,
+//            owner.value,
+//            color.value
+//        ).onEach { resource ->
+//            when (resource) {
+//                is Resource.Loading -> _noteState.value = NoteState(true)
+//                is Resource.Success -> _noteState.value = NoteState(success = true)
+//                is Resource.Error -> _noteState.value = NoteState(error = "Error")
+//            }
+//        }.launchIn(GlobalScope)
     }
 }
