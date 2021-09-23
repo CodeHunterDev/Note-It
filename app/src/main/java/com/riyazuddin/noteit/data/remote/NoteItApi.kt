@@ -3,6 +3,7 @@ package com.riyazuddin.noteit.data.remote
 import com.riyazuddin.noteit.common.Constants.JWT_TOKEN
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.data.remote.request.AccountRequest
+import com.riyazuddin.noteit.data.remote.request.DeleteNoteRequest
 import com.riyazuddin.noteit.data.remote.response.AuthResponse
 import com.riyazuddin.noteit.data.remote.response.SimpleResponse
 import retrofit2.Response
@@ -31,6 +32,12 @@ interface NoteItApi {
     @POST("/api/note/addNote")
     suspend fun addNote(
         @Body note: Note,
+        @Header("Authorization") token: String = JWT_TOKEN
+    ): Response<SimpleResponse>
+
+    @POST("/api/note/deleteNote")
+    suspend fun deleteNote(
+        @Body deleteNoteRequest: DeleteNoteRequest,
         @Header("Authorization") token: String = JWT_TOKEN
     ): Response<SimpleResponse>
 }

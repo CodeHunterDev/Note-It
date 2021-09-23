@@ -23,6 +23,7 @@ class AddOrEditNoteViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var currentNoteId: String = UUID.randomUUID().toString()
+    private var noteTimestamp: Long = System.currentTimeMillis()
 
     private val _noteTitle = mutableStateOf(
         NoteTextFieldState(
@@ -59,6 +60,7 @@ class AddOrEditNoteViewModel @Inject constructor(
                             isHintVisible = false
                         )
                         _noteColor.value = it.color
+                        noteTimestamp = it.timestamp
                     }
                 }
             }
@@ -98,7 +100,7 @@ class AddOrEditNoteViewModel @Inject constructor(
                                 id = currentNoteId,
                                 title = noteTitle.value.text,
                                 content = noteContent.value.text,
-                                timestamp = System.currentTimeMillis(),
+                                timestamp = noteTimestamp,
                                 color = noteColor.value
                             )
                         )

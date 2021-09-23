@@ -72,19 +72,4 @@ class NotesViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-//    private fun getAllNotes(noteOrder: NoteOrder) {
-//        val a = getNotesUseCase(noteOrder)
-//        getNotesUseCase(noteOrder).onEach { resource ->
-//            when (resource) {
-//                is Resource.Loading -> _getNoteState.value = NotesState(true)
-//                is Resource.Success -> _getNoteState.value =
-//                    NotesState(success = true, notes = resource.data ?: emptyList())
-//                is Resource.Error -> _getNoteState.value =
-//                    NotesState(
-//                        notes = resource.data ?: emptyList(),
-//                        error = resource.message ?: AN_UNKNOWN_ERROR_OCCURRED
-//                    )
-//            }
-//        }.launchIn(viewModelScope)
-//    }
 }

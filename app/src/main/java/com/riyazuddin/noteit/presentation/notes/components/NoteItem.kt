@@ -64,7 +64,6 @@ fun NoteItem(
                     cornerRadius = CornerRadius(cornerRadius.toPx())
                 )
             }
-
         }
         Column(
             modifier = Modifier
@@ -91,48 +90,37 @@ fun NoteItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 val sdf = SimpleDateFormat("dd-mm-yy hh:mm", Locale.US)
                 val date = "Date: ${sdf.format(note.timestamp)}"
                 Text(
                     text = date,
                     style = TextStyle(
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Light,
+                        fontWeight = FontWeight.Normal,
                     )
                 )
-
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val dis = if (note.isSynced) "Synced" else "Not Synced"
                     Icon(
                         imageVector = if (note.isSynced) Icons.Default.Check else Icons.Default.Close,
                         contentDescription = dis,
-                        tint = if (note.isSynced) Color.Green else Color.Red
+                        tint = if (note.isSynced) Color(0xFF1B5E20) else Color.Red
                     )
                     Text(
                         text = dis,
                         style = TextStyle(
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Light,
+                            fontWeight = FontWeight.Normal,
                         )
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     IconButton(
                         onClick = onDelete,
-//                        modifier = Modifier.align(Alignment.BottomEnd)
                     ) {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Note")
                     }
                 }
-
             }
         }
-
-//        IconButton(
-//            onClick = onDelete,
-//            modifier = Modifier.align(Alignment.BottomEnd)
-//        ) {
-//            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Note")
-//        }
     }
 }

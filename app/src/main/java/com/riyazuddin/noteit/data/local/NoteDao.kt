@@ -1,10 +1,8 @@
 package com.riyazuddin.noteit.data.local
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import com.riyazuddin.noteit.data.model.LocallyDeletedNote
 import com.riyazuddin.noteit.data.model.Note
 import kotlinx.coroutines.flow.Flow
 
@@ -29,7 +27,15 @@ interface NoteDao {
     @Query("SELECT * FROM notes ORDER BY timestamp DESC")
     fun getAllNotes(): Flow<List<Note>>
 
-//    @Query("DELETE FROM notes")
-//    fun deleteAllNotes()
+    @Query("DELETE FROM notes")
+    fun deleteAllNotes()
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLocallyDeletedNoteId(locallyDeletedNote: LocallyDeletedNote)
+
+    @Query("DELETE FROM locally_deleted_note WHERE locallyDeletedNoteId = :locallyDeletedNoteId")
+    suspend fun deletedLocallyDeletedNote(locallyDeletedNoteId: String)
+
+    @Query("SELECT * FROM locally_deleted_note")
+    suspend fun getAllLocallyDeleteNotes(): List<LocallyDeletedNote>
 }

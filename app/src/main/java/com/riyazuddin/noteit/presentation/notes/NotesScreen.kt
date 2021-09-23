@@ -1,6 +1,7 @@
 package com.riyazuddin.noteit.presentation.notes
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,12 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.gson.Gson
 import com.riyazuddin.noteit.common.Screen
-import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.presentation.notes.components.NoteItem
 import com.riyazuddin.noteit.presentation.notes.components.OrderSection
 import kotlinx.coroutines.launch
@@ -53,18 +56,33 @@ fun NotesScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+//                .padding(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.primary),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Notes", style = MaterialTheme.typography.h4)
+                Text(
+                    text = "Notes",
+                    style = TextStyle(
+                        color = MaterialTheme.colors.onPrimary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 34.sp,
+                        letterSpacing = 0.25.sp
+                    ),
+                    modifier = Modifier.padding(5.dp)
+                )
                 IconButton(onClick = {
                     viewModel.onEvent(NotesEvents.ToggleOrderSection)
                 }) {
-                    Icon(imageVector = Icons.Default.Sort, contentDescription = "Sort")
+                    Icon(
+                        imageVector = Icons.Default.Sort,
+                        contentDescription = "Sort",
+                        tint = Color.White
+                    )
                 }
             }
             AnimatedVisibility(
@@ -75,15 +93,16 @@ fun NotesScreen(
                 OrderSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .padding(start = 16.dp, top = 16.dp),
                     noteOrder = notesState.noteOrder,
                     onNoteOrderChange = {
                         viewModel.onEvent(NotesEvents.Order(it))
                     }
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            LazyColumn(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
                 items(notesState.notes) { note ->
                     NoteItem(
                         note = note,
