@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.riyazuddin.noteit.common.Screen
 import com.riyazuddin.noteit.data.model.Note
-import com.riyazuddin.noteit.domain.use_cases.notes.NotesEvents
 import com.riyazuddin.noteit.presentation.notes.components.NoteItem
 import com.riyazuddin.noteit.presentation.notes.components.OrderSection
 import kotlinx.coroutines.launch
@@ -32,11 +31,6 @@ fun NotesScreen(
     viewModel: NotesViewModel = hiltViewModel()
 ) {
 
-    fun navigationToNote(note: Note) {
-        val user = Gson().toJson(note)
-        navController.navigate("${Screen.CreateNoteScreen.route}/$user")
-    }
-
     val notesState = viewModel.notesState.value
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
@@ -45,7 +39,9 @@ fun NotesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-
+                    navController.navigate(
+                        Screen.CreateNoteScreen.route
+                    )
                 },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
@@ -94,7 +90,10 @@ fun NotesScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navigationToNote(note)
+                                navController.navigate(
+                                    Screen.CreateNoteScreen.route +
+                                            "?noteId=${note.id}&noteColor=${note.color}"
+                                )
                             },
                         onDelete = {
                             viewModel.onEvent(NotesEvents.DeleteNote(note))

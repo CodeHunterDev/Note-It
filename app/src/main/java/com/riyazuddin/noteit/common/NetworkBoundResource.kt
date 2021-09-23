@@ -14,7 +14,6 @@ inline fun <ResultType, RequestType> networkBoundResource(
     crossinline onFetchFailed: (Throwable) -> Unit = { },
     crossinline shouldFetch: (ResultType) -> Boolean = { true }
 ) = flow {
-//    emit(Resource.Loading(null))
     val data = query().first()
 
     val flow = if (shouldFetch(data)) {
@@ -23,19 +22,12 @@ inline fun <ResultType, RequestType> networkBoundResource(
             val fetchedResult = fetch()
             saveFetchResult(fetchedResult)
             query()
-//            query().map {
-//                Resource.Success(it)
-//            }
         }catch (e: Exception){
             Timber.e(e)
             onFetchFailed(e)
             query()
-//            query().map {
-//                Resource.Error("Couldn't reach server. Try later.", it)
-//            }
         }
     } else {
-//        query().map { Resource.Success(it) }
         query()
     }
 

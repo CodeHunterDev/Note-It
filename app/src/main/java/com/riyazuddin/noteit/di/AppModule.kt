@@ -12,6 +12,7 @@ import com.riyazuddin.noteit.data.repository.AuthRepositoryImp
 import com.riyazuddin.noteit.data.repository.NoteRepositoryImp
 import com.riyazuddin.noteit.domain.repository.IAuthRepository
 import com.riyazuddin.noteit.domain.repository.INoteRepository
+import com.riyazuddin.noteit.domain.use_cases.create_or_update_note.GetNoteUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.DeleteNoteUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.GetNotesUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.InsertNoteUseCase
@@ -77,7 +78,8 @@ object AppModule {
         NotesUseCases(
             getNotes = GetNotesUseCase(notesRepository),
             deleteNoteUseCase = DeleteNoteUseCase(notesRepository),
-            insertNoteUseCase = InsertNoteUseCase(notesRepository)
+            insertNoteUseCase = InsertNoteUseCase(notesRepository),
+            getNote = GetNoteUseCase(notesRepository)
         )
     }
 }

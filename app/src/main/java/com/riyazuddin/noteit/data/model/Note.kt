@@ -9,7 +9,7 @@ import java.util.*
 @Entity(tableName = "notes")
 data class Note(
     @PrimaryKey(autoGenerate = false)
-    val id: String = UUID.randomUUID().toString(),
+    val id: String,
     val title: String,
     val content: String,
     val timestamp: Long,

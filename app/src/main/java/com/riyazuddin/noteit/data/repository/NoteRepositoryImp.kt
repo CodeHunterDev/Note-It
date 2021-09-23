@@ -8,7 +8,10 @@ import com.riyazuddin.noteit.data.local.NoteDao
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.data.remote.NoteItApi
 import com.riyazuddin.noteit.domain.repository.INoteRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,15 +23,22 @@ class NoteRepositoryImp @Inject constructor(
 ) : INoteRepository {
 
     override suspend fun insertNote(note: Note) {
-        val response = try {
-            noteItApi.addNote(note)
-        } catch (e: Exception) {
-            null
+        noteDao.insert(note)
+        sendNoteToApi(note)
+    }
+
+    private suspend fun sendNoteToApi(note: Note){
+        withContext(Dispatchers.IO + NonCancellable){
+            val response = try {
+                noteItApi.addNote(note)
+            } catch (e: Exception) {
+                null
+            }
+            if (response != null && response.isSuccessful) {
+                noteDao.insert(note.apply { isSynced = true })
+            } else
+                noteDao.insert(note)
         }
-        if (response != null && response.isSuccessful) {
-            noteDao.insert(note.apply { isSynced = true })
-        } else
-            noteDao.insert(note)
     }
 
     override suspend fun insertNotes(notes: List<Note>) {
@@ -39,13 +49,24 @@ class NoteRepositoryImp @Inject constructor(
         noteDao.deleteNoteByID(note.id)
     }
 
+    override suspend fun getNote(notedId: String): Note? {
+        return noteDao.getNote(notedId)
+    }
+
     override suspend fun syncNotes(): Response<List<Note>> {
         val unSyncedNotes = noteDao.getAllUnSyncedNotes()
-        unSyncedNotes.forEach {
-            insertNote(it)
+        return if (unSyncedNotes.isEmpty()){
+            Timber.i("EMPTY LIST")
+            Response.success(emptyList())
         }
-        //TODO("Sync deleted notes")
-        return noteItApi.getNotes()
+        else{
+            Timber.i("NOT EMPTY LIST")
+            unSyncedNotes.forEach {
+                sendNoteToApi(it)
+            }
+            noteItApi.getNotes()
+        }
+
     }
 
     override fun getAllNotes(): Flow<List<Note>> {
@@ -58,7 +79,6 @@ class NoteRepositoryImp @Inject constructor(
             },
             saveFetchResult = { response ->
                 response.body()?.let { notes ->
-                    Timber.i(notes.toString())
                     notes.onEach { note ->
                         note.isSynced = true
                         noteDao.insert(note)

@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.riyazuddin.noteit.common.NoteOrder
 import com.riyazuddin.noteit.common.OrderType
 import com.riyazuddin.noteit.data.model.Note
-import com.riyazuddin.noteit.domain.use_cases.notes.NotesEvents
-import com.riyazuddin.noteit.domain.use_cases.notes.GetNotesUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.NotesUseCases
 import com.riyazuddin.noteit.presentation.states.NotesState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,7 +65,7 @@ class NotesViewModel @Inject constructor(
     private fun getNotes(noteOrder: NoteOrder){
         getNotesJob?.cancel()
         getNotesJob = notesUseCases.getNotes(noteOrder).onEach {
-            _notesState.value = _notesState.value.copy(
+            _notesState.value = notesState.value.copy(
                 notes = it,
                 noteOrder = noteOrder
             )

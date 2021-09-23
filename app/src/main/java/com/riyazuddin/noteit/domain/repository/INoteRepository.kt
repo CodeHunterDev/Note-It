@@ -12,6 +12,8 @@ interface INoteRepository {
 
     suspend fun deleteNote(note: Note)
 
+    suspend fun getNote(notedId: String): Note?
+
     fun getAllNotes(): Flow<List<Note>>
 
     suspend fun syncNotes(): Response<List<Note>>

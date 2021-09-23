@@ -1,4 +1,4 @@
-package com.riyazuddin.noteit.domain.use_cases.notes
+package com.riyazuddin.noteit.presentation.notes
 
 import com.riyazuddin.noteit.common.NoteOrder
 import com.riyazuddin.noteit.data.model.Note
