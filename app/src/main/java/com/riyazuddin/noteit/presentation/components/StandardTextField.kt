@@ -9,11 +9,13 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.sp
 import com.riyazuddin.noteit.R
 
 @Composable
@@ -71,4 +73,6 @@ fun StandardTextField(
             onImeAction()
         }
     )
+    if (error.isNotEmpty())
+        Text(text = error, color = Color.Red, fontSize = 12.sp)
 }

@@ -73,7 +73,7 @@ fun NotesScreen(
                         fontSize = 34.sp,
                         letterSpacing = 0.25.sp
                     ),
-                    modifier = Modifier.padding(5.dp)
+                    modifier = Modifier.padding(5.dp).padding(start = 10.dp)
                 )
                 IconButton(onClick = {
                     viewModel.onEvent(NotesEvents.ToggleOrderSection)

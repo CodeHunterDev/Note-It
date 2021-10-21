@@ -14,6 +14,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 class NoteRepositoryImp @Inject constructor(
@@ -97,6 +98,7 @@ class NoteRepositoryImp @Inject constructor(
                     notes.onEach { note ->
                         note.isSynced = true
                         noteDao.insert(note)
+                        Timber.i("$note")
                     }
                 }
             },

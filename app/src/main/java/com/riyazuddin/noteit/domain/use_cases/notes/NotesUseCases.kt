@@ -1,6 +1,6 @@
 package com.riyazuddin.noteit.domain.use_cases.notes
 
-import com.riyazuddin.noteit.domain.use_cases.create_or_update_note.GetNoteUseCase
+import com.riyazuddin.noteit.domain.use_cases.add_edit_note.GetNoteUseCase
 
 data class NotesUseCases(
     val getNotes: GetNotesUseCase,

@@ -108,6 +108,8 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
+
     // Local Unit Tests
     implementation "androidx.test:core:1.4.0"
     testImplementation "junit:junit:4.13.2"

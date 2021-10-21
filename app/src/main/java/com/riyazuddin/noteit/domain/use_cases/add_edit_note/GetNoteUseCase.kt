@@ -1,4 +1,4 @@
-package com.riyazuddin.noteit.domain.use_cases.create_or_update_note
+package com.riyazuddin.noteit.domain.use_cases.add_edit_note
 
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.domain.repository.INoteRepository

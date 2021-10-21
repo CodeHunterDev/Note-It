@@ -1,13 +1,10 @@
-package com.riyazuddin.noteit.domain.use_cases.create_or_update_note
+package com.riyazuddin.noteit.domain.use_cases.add_edit_note
 
-import com.riyazuddin.noteit.common.Resource
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.domain.repository.INoteRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class CreateOrUpdateNoteUseCase @Inject constructor(
+class AddEditUseCase @Inject constructor(
     private val noteRepository: INoteRepository
 ) {
 
@@ -16,9 +13,8 @@ class CreateOrUpdateNoteUseCase @Inject constructor(
         title: String,
         content: String,
         date: Long,
-        owner: String,
         color: Int
     ) {
-        noteRepository.insertNote(Note(id, title, content, date, owner, color))
+        noteRepository.insertNote(Note(id, title, content, date, color))
     }
 }

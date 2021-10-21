@@ -17,11 +17,11 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 @DelicateCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun Navigation() {
+fun Navigation(startDestination: String) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Screen.NotesScreen.route
+        startDestination = startDestination
     ) {
         composable(route = Screen.LoginScreen.route) {
             LoginScreen(navController = navController)

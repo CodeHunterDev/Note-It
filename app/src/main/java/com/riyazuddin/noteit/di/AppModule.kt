@@ -1,9 +1,13 @@
 package com.riyazuddin.noteit.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.riyazuddin.noteit.NoteItApplication
 import com.riyazuddin.noteit.common.Constants.BASE_URL
+import com.riyazuddin.noteit.common.Constants.ENCRYPTED_SHARED_PREF_NAME
 import com.riyazuddin.noteit.common.Constants.NOTES_DB_NAME
 import com.riyazuddin.noteit.data.local.NoteDao
 import com.riyazuddin.noteit.data.local.NotesDB
@@ -12,11 +16,12 @@ import com.riyazuddin.noteit.data.repository.AuthRepositoryImp
 import com.riyazuddin.noteit.data.repository.NoteRepositoryImp
 import com.riyazuddin.noteit.domain.repository.IAuthRepository
 import com.riyazuddin.noteit.domain.repository.INoteRepository
-import com.riyazuddin.noteit.domain.use_cases.create_or_update_note.GetNoteUseCase
+import com.riyazuddin.noteit.domain.use_cases.add_edit_note.GetNoteUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.DeleteNoteUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.GetNotesUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.InsertNoteUseCase
 import com.riyazuddin.noteit.domain.use_cases.notes.NotesUseCases
+import com.riyazuddin.noteit.domain.use_cases.signup.SignUpUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,13 +61,13 @@ object AppModule {
     @Singleton
     fun provideNoteDB(
         @ApplicationContext context: Context
-    ) = Room.databaseBuilder(context, NotesDB::class.java, NOTES_DB_NAME).build()
+    ): NotesDB = Room.databaseBuilder(context, NotesDB::class.java, NOTES_DB_NAME).build()
 
     @Provides
     @Singleton
     fun provideNoteDao(
         notesDB: NotesDB
-    ) = notesDB.notedDao()
+    ): NoteDao = notesDB.notedDao()
 
     @Provides
     @Singleton
@@ -80,6 +85,35 @@ object AppModule {
             deleteNoteUseCase = DeleteNoteUseCase(notesRepository),
             insertNoteUseCase = InsertNoteUseCase(notesRepository),
             getNote = GetNoteUseCase(notesRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideSignUpUseCase(
+        authRepository: IAuthRepository,
+        sharedPreferences: SharedPreferences
+    ) = kotlin.run {
+        SignUpUseCase(
+            authRepository,
+            sharedPreferences
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideEncryptedSharedPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+        return EncryptedSharedPreferences.create(
+            context,
+            ENCRYPTED_SHARED_PREF_NAME,
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
     }
 }

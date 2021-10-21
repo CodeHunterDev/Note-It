@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.presentation.note.components.TransparentTextField
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -29,7 +28,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CreateNoteScreen(
     noteColor: Int,
-    viewModel: AddOrEditNoteViewModel = hiltViewModel()
+    viewModel: AddEditNoteViewModel = hiltViewModel()
 ) {
 
     val titleState = viewModel.noteTitle.value
@@ -49,12 +48,12 @@ fun CreateNoteScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                AddOrEditNoteViewModel.UIEvent.SaveNote -> {
+                AddEditNoteViewModel.UIEvent.SaveNote -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         "Note Saved"
                     )
                 }
-                is AddOrEditNoteViewModel.UIEvent.ShowSnackbar -> {
+                is AddEditNoteViewModel.UIEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         event.message
                     )
