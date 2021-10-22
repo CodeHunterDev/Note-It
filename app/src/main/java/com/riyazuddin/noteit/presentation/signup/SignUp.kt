@@ -8,11 +8,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -29,9 +27,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.riyazuddin.noteit.R
 import com.riyazuddin.noteit.common.Screen
+import com.riyazuddin.noteit.common.UIEvent
 import com.riyazuddin.noteit.presentation.components.StandardTextField
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Composable
@@ -51,13 +49,13 @@ fun SignUpScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is SignUpViewModel.UIEventSignUp.ShowSnackbar -> {
+                is UIEvent.ShowSnackbar -> {
                     Timber.i(event.message)
                     scaffoldState.snackbarHostState.showSnackbar(
                         event.message
                     )
                 }
-                is SignUpViewModel.UIEventSignUp.SignUp -> {
+                is UIEvent.OnSuccessEvent -> {
                     val options = NavOptions.Builder()
                         .setPopUpTo(Screen.LoginScreen.route, true).build()
                     navController.navigate(Screen.NotesScreen.route, options)
@@ -149,20 +147,24 @@ fun SignUpScreen(
                         }
                     )
                     Spacer(modifier = Modifier.height(18.dp))
-                    Button(
-                        onClick = {
-                            viewModel.onEvent(SignUpEvent.SignUp)
-                        },
-                        enabled = !signUpInProgress,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        shape = RoundedCornerShape(15.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.sign_up),
-                            fontSize = 20.sp
-                        )
+                    if (!signUpInProgress) {
+                        Button(
+                            onClick = {
+                                viewModel.onEvent(SignUpEvent.SignUp)
+                            },
+//                            enabled = !signUpInProgress,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            shape = RoundedCornerShape(15.dp)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.sign_up),
+                                fontSize = 20.sp
+                            )
+                        }
+                    } else {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                     }
                 }
                 Text(

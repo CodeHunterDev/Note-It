@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.riyazuddin.noteit.common.UIEvent
 import com.riyazuddin.noteit.data.model.InvalidNoteException
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.domain.use_cases.notes.NotesUseCases
@@ -104,7 +105,7 @@ class AddEditNoteViewModel @Inject constructor(
                                 color = noteColor.value
                             )
                         )
-                        _eventFlow.emit(UIEvent.SaveNote)
+                        _eventFlow.emit(UIEvent.OnSuccessEvent)
                     } catch (e: InvalidNoteException) {
                         _eventFlow.emit(
                             UIEvent.ShowSnackbar(e.message ?: "Couldn't save the note.")
@@ -113,10 +114,5 @@ class AddEditNoteViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    sealed class UIEvent {
-        data class ShowSnackbar(val message: String) : UIEvent()
-        object SaveNote : UIEvent()
     }
 }

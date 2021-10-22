@@ -14,4 +14,12 @@ object Constants {
 
     const val NO_TOKEN = "NO_TOKEN"
     const val TOKEN_KEY = NO_TOKEN
+
+    const val EMAIL_REQUIRED = "E-mail required"
+    const val INVALID_EMAIL = "Invalid E-mail"
+    const val VALID = "Valid"
+
+    const val PASSWORD_REQUIRED = "Password required"
+    const val PASSWORD_REQUIREMENT = "Password should contain Lower case, upper case, digit and length 8"
+    const val PASSWORD_DOES_NOT_MATCH = "Doesn't match"
 }

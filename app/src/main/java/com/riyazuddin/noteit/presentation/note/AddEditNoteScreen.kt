@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.riyazuddin.noteit.common.UIEvent
 import com.riyazuddin.noteit.data.model.Note
 import com.riyazuddin.noteit.presentation.note.components.TransparentTextField
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -48,14 +49,14 @@ fun CreateNoteScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                AddEditNoteViewModel.UIEvent.SaveNote -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        "Note Saved"
-                    )
-                }
-                is AddEditNoteViewModel.UIEvent.ShowSnackbar -> {
+                is UIEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         event.message
+                    )
+                }
+                is UIEvent.OnSuccessEvent -> {
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        "Note Saved"
                     )
                 }
             }

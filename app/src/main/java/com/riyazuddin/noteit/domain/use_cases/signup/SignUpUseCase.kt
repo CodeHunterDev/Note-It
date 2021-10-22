@@ -2,11 +2,11 @@ package com.riyazuddin.noteit.domain.use_cases.signup
 
 import android.content.SharedPreferences
 import com.riyazuddin.noteit.common.Constants
-import com.riyazuddin.noteit.common.Constants.AN_UNKNOWN_ERROR_OCCURRED
 import com.riyazuddin.noteit.common.Constants.NO_TOKEN
+import com.riyazuddin.noteit.common.Constants.VALID
 import com.riyazuddin.noteit.common.Validator
 import com.riyazuddin.noteit.domain.repository.IAuthRepository
-import com.riyazuddin.noteit.presentation.states.SignUpState
+import com.riyazuddin.noteit.presentation.signup.SignUpState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
@@ -23,16 +23,16 @@ class SignUpUseCase @Inject constructor(
     ): Flow<SignUpState> {
         return flow {
             val emailResult = Validator.validateEmail(email)
-            if (emailResult.error.isNotEmpty())
-                emit(emailResult)
+            if (emailResult != VALID)
+                return@flow emit(SignUpState.EmailError(emailResult))
 
             val passwordResult = Validator.validatePassword(password)
-            if (passwordResult.error.isNotEmpty())
-                emit(passwordResult)
+            if (passwordResult != VALID)
+                return@flow emit(SignUpState.PasswordError(passwordResult))
 
             val repeatedPasswordResult = Validator.validateRepeatPassword(password, repeatPassword)
-            if (repeatedPasswordResult !is SignUpState.ValidInput)
-                emit(repeatedPasswordResult)
+            if (repeatedPasswordResult != VALID)
+                return@flow emit(SignUpState.RepeatPasswordError(repeatedPasswordResult))
 
             emit(SignUpState.ProcessingSignUpEvent(true))
 
@@ -41,9 +41,9 @@ class SignUpUseCase @Inject constructor(
                 val token = response.token ?: NO_TOKEN
                 sharedPreferences.edit().putString(Constants.TOKEN_KEY, token).apply()
                 Timber.i(response.toString())
-                emit(SignUpState.SuccessResponse(response.message))
+                return@flow emit(SignUpState.SuccessResponse(response.message))
             }else{
-                emit(SignUpState.ErrorResponse(response.message))
+                return@flow emit(SignUpState.ErrorResponse(response.message))
             }
         }
     }
