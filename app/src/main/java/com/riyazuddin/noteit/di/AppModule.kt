@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.riyazuddin.noteit.NoteItApplication
+import com.riyazuddin.noteit.common.AuthInterceptor
 import com.riyazuddin.noteit.common.Constants.BASE_URL
 import com.riyazuddin.noteit.common.Constants.ENCRYPTED_SHARED_PREF_NAME
 import com.riyazuddin.noteit.common.Constants.NOTES_DB_NAME
@@ -28,6 +29,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -44,10 +46,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNoteItApi(): NoteItApi {
+    fun providesAuthInterceptor() = AuthInterceptor()
+
+    @Provides
+    @Singleton
+    fun provideNoteItApi(
+        authInterceptor: AuthInterceptor
+    ): NoteItApi {
+        val client = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .build()
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
             .build()
             .create(NoteItApi::class.java)
     }
@@ -93,11 +105,13 @@ object AppModule {
     @Singleton
     fun provideSignUpUseCase(
         authRepository: IAuthRepository,
-        sharedPreferences: SharedPreferences
+        sharedPreferences: SharedPreferences,
+        authInterceptor: AuthInterceptor
     ) = kotlin.run {
         SignUpUseCase(
             authRepository,
-            sharedPreferences
+            sharedPreferences,
+            authInterceptor
         )
     }
 
@@ -105,11 +119,13 @@ object AppModule {
     @Singleton
     fun provideLoginUseCase(
         authRepository: IAuthRepository,
-        sharedPreferences: SharedPreferences
+        sharedPreferences: SharedPreferences,
+        authInterceptor: AuthInterceptor
     ) = kotlin.run {
         LoginUseCase(
             authRepository,
-            sharedPreferences
+            sharedPreferences,
+            authInterceptor
         )
     }
 

@@ -10,7 +10,7 @@ import javax.inject.Inject
 @HiltAndroidApp
 class NoteItApplication : Application() {
 
-    var isDarkMode = mutableStateOf(false)
+    private var isDarkMode = mutableStateOf(false)
 
     fun toggleTheme(){
         isDarkMode.value = !isDarkMode.value

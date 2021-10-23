@@ -28,6 +28,7 @@ class NoteRepositoryImp @Inject constructor(
         sendInsertNoteToApi(note)
     }
 
+
     private suspend fun sendInsertNoteToApi(note: Note) {
         withContext(Dispatchers.IO + NonCancellable) {
             val response = try {

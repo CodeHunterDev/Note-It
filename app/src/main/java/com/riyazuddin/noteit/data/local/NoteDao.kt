@@ -28,7 +28,7 @@ interface NoteDao {
     fun getAllNotes(): Flow<List<Note>>
 
     @Query("DELETE FROM notes")
-    fun deleteAllNotes()
+    suspend fun deleteAllNotes()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLocallyDeletedNoteId(locallyDeletedNote: LocallyDeletedNote)

@@ -1,6 +1,7 @@
 package com.riyazuddin.noteit.domain.use_cases.signup
 
 import android.content.SharedPreferences
+import com.riyazuddin.noteit.common.AuthInterceptor
 import com.riyazuddin.noteit.common.Constants
 import com.riyazuddin.noteit.common.Constants.NO_TOKEN
 import com.riyazuddin.noteit.common.Constants.VALID
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 class SignUpUseCase @Inject constructor(
     private val repository: IAuthRepository,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val authInterceptor: AuthInterceptor
 ) {
     suspend operator fun invoke(
         email: String,
@@ -40,7 +42,7 @@ class SignUpUseCase @Inject constructor(
             if (response.successful) {
                 val token = response.token ?: NO_TOKEN
                 sharedPreferences.edit().putString(Constants.TOKEN_KEY, token).apply()
-                Timber.i(response.toString())
+                authInterceptor.setToken(token)
                 return@flow emit(SignUpState.SuccessResponse(response.message))
             }else{
                 return@flow emit(SignUpState.ErrorResponse(response.message))
